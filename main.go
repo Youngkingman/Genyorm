@@ -1,7 +1,7 @@
 package main
 
 import (
-	gen "Ghenyin/Gen"
+	gen "Ghenyorm/Gen"
 	"net/http"
 )
 
