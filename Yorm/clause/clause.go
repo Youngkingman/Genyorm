@@ -16,6 +16,9 @@ const (
 	LIMIT
 	WHERE
 	ORDER_BY
+	UPDATE
+	DELETE
+	COUNT
 )
 
 func (c *Clause) Set(name Type, vars ...interface{}) {
