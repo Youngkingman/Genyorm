@@ -62,6 +62,9 @@ func (engine *Engine) Transaction(f TxFunc) (result interface{}, err error) {
 			s.Rollback()
 		} else {
 			err = s.Commit()
+			if err != nil {
+				s.Rollback()
+			}
 		}
 	}()
 
