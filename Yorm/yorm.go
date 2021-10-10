@@ -44,3 +44,29 @@ func (engine *Engine) Close() {
 func (engine *Engine) NewSession() *session.Session {
 	return session.New(engine.db, engine.dialect)
 }
+
+//通过回调函数实现一键事务，有错误则回滚，没错误则提交
+type TxFunc func(*session.Session) (interface{}, error)
+
+func (engine *Engine) Transaction(f TxFunc) (result interface{}, err error) {
+	s := engine.NewSession()
+	if err := s.Begin(); err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			s.Rollback()
+			panic(p)
+		} else if err != nil {
+			s.Rollback()
+		} else {
+			err = s.Commit()
+			if err != nil {
+				s.Rollback()
+			}
+		}
+	}()
+
+	return f(s)
+}
